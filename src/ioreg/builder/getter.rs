@@ -93,6 +93,7 @@ fn build_new(cx: &ExtCtxt, path: &Vec<String>) -> P<ast::Item> {
                                           utils::getter_name(cx, path));
   let item = quote_item!(cx,
     #[doc = "Create a getter reflecting the current value of the given register."]
+    #[inline(always)]
     pub fn new(reg: & $reg_ty) -> $getter_ty {
       $getter_ty {
         value: reg.value.get(),
@@ -151,6 +152,7 @@ fn build_impl(cx: &ExtCtxt, path: &Vec<String>, reg: &node::Reg,
     .expect("Unexpected non-primitive register");
   let get_raw: P<ast::Method> = quote_method!(cx,
     #[doc = "Get the raw value of the register."]
+    #[inline(always)]
     pub fn raw(&self) -> $packed_ty {
       self.value
     }
@@ -191,6 +193,7 @@ fn build_field_get_fn(cx: &ExtCtxt, path: &Vec<String>, reg: &node::Reg,
       quote_expr!(cx, (self.value >> $shift) & $mask));
     quote_method!(cx,
       $doc_attr
+      #[inline(always)]
       pub fn $fn_name(&self) -> $field_ty {
         $value
       }
@@ -202,6 +205,7 @@ fn build_field_get_fn(cx: &ExtCtxt, path: &Vec<String>, reg: &node::Reg,
       quote_expr!(cx, (self.value >> $shift) & $mask));
     quote_method!(cx,
       $doc_attr
+      #[inline(always)]
       pub fn $fn_name(&self, idx: uint) -> $field_ty {
         $value
       }

@@ -103,6 +103,7 @@ fn build_new<'a>(cx: &'a ExtCtxt, path: &Vec<String>)
                                           utils::setter_name(cx, path));
   let item = quote_item!(cx,
     #[doc="Create a new updater"]
+    #[inline(always)]
     pub fn new(reg: &'a $reg_ty) -> $setter_ty {
       $setter_ty {
         value: 0,
@@ -146,6 +147,7 @@ fn build_drop(cx: &ExtCtxt, path: &Vec<String>,
     #[unsafe_destructor]
     #[doc = "This performs the register update"]
     impl<'a> Drop for $setter_ty<'a> {
+      #[inline(always)]
       fn drop(&mut self) {
         let clear_mask: $unpacked_ty = $clear as $unpacked_ty;
         if self.mask != 0 {
@@ -163,6 +165,7 @@ fn build_done(cx: &ExtCtxt) -> P<ast::Method>
   quote_method!(cx,
     #[doc="Commit changes to register. This is to allow chains of `set_*` \
            invocations to be used as a statement."]
+    #[inline(always)]
     pub fn done(self) {}
   )
 }
@@ -226,6 +229,7 @@ fn build_field_set_fn(cx: &ExtCtxt, path: &Vec<String>, reg: &node::Reg,
     let shift = utils::shift(cx, None, field);
     quote_method!(cx,
       $doc_attr
+      #[inline(always)]
       pub fn $fn_name<'b>(&'b mut self, new_value: $field_ty)
           -> &'b mut $setter_ty<'a> {
         self.value |= (self.value & ! $mask) | ((new_value as $unpacked_ty) & $mask) << $shift;
@@ -237,6 +241,7 @@ fn build_field_set_fn(cx: &ExtCtxt, path: &Vec<String>, reg: &node::Reg,
     let shift = utils::shift(cx, Some(quote_expr!(cx, idx)), field);
     quote_method!(cx,
       $doc_attr
+      #[inline(always)]
       pub fn $fn_name<'b>(&'b mut self, idx: uint, new_value: $field_ty)
           -> &'b mut $setter_ty<'a> {
         self.value |= (self.value & ! $mask) | ((new_value as $unpacked_ty) & $mask) << $shift;
@@ -268,6 +273,7 @@ fn build_field_clear_fn(cx: &ExtCtxt, path: &Vec<String>,
     let shift = utils::shift(cx, None, field);
     quote_method!(cx,
       $doc_attr
+      #[inline(always)]
       pub fn $fn_name<'b>(&'b mut self) -> &'b mut $setter_ty<'a> {
         self.value |= $mask << $shift;
         self.mask |= $mask << $shift;
@@ -278,6 +284,7 @@ fn build_field_clear_fn(cx: &ExtCtxt, path: &Vec<String>,
     let shift = utils::shift(cx, Some(quote_expr!(cx, idx)), field);
     quote_method!(cx,
       $doc_attr
+      #[inline(always)]
       pub fn $fn_name<'b>(&'b mut self, idx: uint) -> &'b mut $setter_ty<'a> {
         self.value |= $mask << $shift;
         self.mask |= $mask << $shift;
