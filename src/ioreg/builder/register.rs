@@ -117,6 +117,7 @@ fn build_reg_struct(cx: &ExtCtxt, path: &Vec<String>,
   let item = quote_item!(cx,
     $doc_attr
     #[allow(non_camel_case_types)]
+    #[repr(packed)]
     pub struct $ty_name {
       value: VolatileCell<$packed_ty>,
     }
