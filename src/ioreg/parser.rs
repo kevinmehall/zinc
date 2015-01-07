@@ -51,7 +51,7 @@ impl<'a> Parser<'a> {
     let sess = cx.parse_sess();
     let ttsvec = tts.iter().map(|x| (*x).clone()).collect();
     let mut reader = box lexer::new_tt_reader(
-        &sess.span_diagnostic, None, ttsvec) as Box<lexer::Reader>;
+        &sess.span_diagnostic, None, None, ttsvec) as Box<lexer::Reader>;
 
     let tok0 = reader.next_token();
     let token = tok0.tok;
