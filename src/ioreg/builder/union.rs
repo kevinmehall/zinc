@@ -110,7 +110,7 @@ impl<'a> node::RegVisitor for BuildUnionTypes<'a> {
     self.builder.push_item(union_type);
 
     let copy_impl = quote_item!(self.cx,
-                                impl ::core::kinds::Copy for $ty_name {});
+                                impl ::core::marker::Copy for $ty_name {});
     self.builder.push_item(copy_impl.unwrap());
   }
 }
